@@ -20,5 +20,10 @@ ar vx $BASEDIR/build/fakechroot_2.19-3.3_all.deb
 tar -xvf $BASEDIR/build/data.tar.xz -C ../env
 rm -rfv $BASEDIR/build/data.tar.xz
 
+wget http://ftp.debian.org/debian/pool/main/f/fakeroot/libfakeroot_1.25.3-1.1_amd64.deb
+ar vx $BASEDIR/build/libfakeroot_1.25.3-1.1_amd64.deb
+tar -xvf $BASEDIR/build/data.tar.xz -C ../env
+rm -rfv $BASEDIR/build/data.tar.xz
+
 rm -rfv build/*
 echo "Ready."
