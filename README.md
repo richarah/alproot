@@ -1,7 +1,7 @@
 # infernal-env
 
 A chroot+fakeroot env that may be brought up from nothing but the following:
-- `wget
+- `wget`
 - `tar`
 - Bourne shell (`sh`)
 - a select few POSIX utilities (`ar`, `cd`, `rm`, `mkdir` and optionally `echo`, though this list may be subject to change)
