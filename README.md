@@ -9,4 +9,4 @@ A chroot+fakeroot env that may be brought up from nothing but the following:
 Originally intended for use with infernal-docker, albeit easily repurposeable for other tasks.
 
 #### Please note - WIP
-This is a work in progress. A lot is missing, and the few features that aren't missing are untested and prone to break things.
+This is a work in progress. Almost everything that is supposed to be here is missing, and the few features that aren't missing are untested and prone to break things.
