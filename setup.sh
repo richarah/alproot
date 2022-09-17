@@ -2,7 +2,8 @@
 
 BASEDIR=$PWD
 
-# DEBUG
+mkdir build
+mkdir env
 rm -rfv ./build/*
 rm -rfv ./env/*
 
