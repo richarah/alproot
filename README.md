@@ -1,6 +1,6 @@
 # infernal-env
 
-A chroot+fakeroot env that may be brought up from nothing but:
+A chroot+fakeroot env that may be brought up from nothing but the following:
 - wget
 - tar
 - Bourne shell (sh)
