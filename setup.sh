@@ -20,5 +20,5 @@ cd $BASEDIR/build/busybox
 ./build.sh && tar -xf $BASEDIR/build/busybox/stable/glibc/busybox.tar.xz -C $BASEDIR/env
 
 # DEBUG
-# rm -rf build
+# rm -rf build/*
 cd $BASEDIR/env
