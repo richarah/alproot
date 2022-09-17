@@ -2,28 +2,25 @@
 
 BASEDIR=$PWD
 
+rm -rf build
+rm -rf env
+
 mkdir build
 mkdir env
-rm -rfv ./build/*
-rm -rfv ./env/*
 
-# TODO: procedural programming and building from source
-cd $BASEDIR/build
+alias wgd="sh $BASEDIR/wget-deb.sh"
 
-wget http://ftp.debian.org/debian/pool/main/b/bash/bash_5.1-2+deb11u1_amd64.deb
-ar vx $BASEDIR/build/bash_5.1-2+deb11u1_amd64.deb
-tar -xvf $BASEDIR/build/data.tar.xz -C ../env
-rm -rfv $BASEDIR/build/data.tar.xz
+# C/C++
+wgd http://ftp.debian.org/debian/pool/main/g/gcc-10/gcc-10-base_10.2.1-6_amd64.deb
+wgd http://ftp.debian.org/debian/pool/main/g/glibc/libc6_2.31-13+deb11u4_amd64.deb
+wgd http://ftp.debian.org/debian/pool/main/libx/libxcrypt/libcrypt1_4.4.18-4_amd64.deb
+wgd http://ftp.debian.org/debian/pool/main/n/ncurses/libtinfo6_6.2+20201114-2_amd64.deb
+wgd http://ftp.debian.org/debian/pool/main/g/gcc-10/libgcc-s1_10.2.1-6_amd64.deb
+wgd http://ftp.debian.org/debian/pool/main/g/gcc-10/libstdc++6_10.2.1-6_amd64.deb
 
-wget http://ftp.debian.org/debian/pool/main/f/fakechroot/fakechroot_2.19-3.3_all.deb
-ar vx $BASEDIR/build/fakechroot_2.19-3.3_all.deb
-tar -xvf $BASEDIR/build/data.tar.xz -C ../env
-rm -rfv $BASEDIR/build/data.tar.xz
+# Shell & utils
+wgd http://ftp.debian.org/debian/pool/main/b/bash/bash_5.1-2+deb11u1_amd64.deb
+wgd http://ftp.debian.org/debian/pool/main/f/fakeroot-ng/fakeroot-ng_0.18-4.1_amd64.deb
 
-wget http://ftp.debian.org/debian/pool/main/f/fakeroot/libfakeroot_1.25.3-1.1_amd64.deb
-ar vx $BASEDIR/build/libfakeroot_1.25.3-1.1_amd64.deb
-tar -xvf $BASEDIR/build/data.tar.xz -C ../env
-rm -rfv $BASEDIR/build/data.tar.xz
-
-rm -rfv build/*
-echo "Ready."
+rm -rf debian-binary
+rm -rf build
