@@ -9,7 +9,9 @@ The only prerequisites are as follows:
 - a select few POSIX utils (`ar`, `cd`, `rm`, `mkdir` and optionally `echo`, though this list may be subject to change)
 - Internet connection
 
-Originally intended for use with infernal-docker, albeit easily repurposeable for other tasks.
+#### What it's for
+
+Although initially designed for use with infernal-docker, this software may be repurposed for a myriad of other tasks. (WIP)
 
 #### A word of warning
 This is a work in progress. A lot is missing, and what isn't missing is prone to cause trouble.
