@@ -1,7 +1,7 @@
 # infernal-env
 
-A chroot+fakeroot env that may be brought up from nothing but wget, an Internet connection and a select few POSIX utilities.
-For use with infernal-docker, but may also be repurposed for other tasks.
+A chroot+fakeroot env that may be brought up from nothing but wget, tar and a select few POSIX utilities.
+Designed for use with infernal-docker, albeit easily repurposed for other tasks.
 
 #### Please note
 
