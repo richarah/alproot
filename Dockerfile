@@ -47,25 +47,27 @@ RUN make install
 RUN rm -rf /build/*
 
 
-
 # util-linux
 WORKDIR /build
 RUN wget https://github.com/util-linux/util-linux/archive/refs/tags/v2.38.1.tar.gz
 
-# TBD: make less ugly
-RUN tar -zxvf *.tar.gz
-RUN mv util-linux-* util-linux
-
-RUN cd util-linux
+RUN tar -zxvf v2.38.1.tar.gz
+WORKDIR build/util-linux-2.38.1
 RUN meson setup builddir && meson configure
-WORKDIR /build/util-linux/builddir
+WORKDIR /build/util-linux-2.38.1/builddir
 RUN ninja
 RUN DESTDIR=/docker meson install
 RUN rm -rf /build/*
 
+
 # talloc
 RUN https://www.samba.org/ftp/talloc/talloc-2.3.4.tar.gz
-RUN tar -zxvf *.tar.gz
+RUN tar -zxvf talloc-2.3.4.tar.gz
+WORKDIR /build/talloc-2.3.4
+RUN ./configure
+RUN make
+RUN make DESTDIR=/docker install
+RUN rm -rf /build/*
 
 
 #FROM scratch AS rootfs
