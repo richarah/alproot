@@ -1,6 +1,6 @@
 FROM ubuntu:jammy AS build
 
-alias make="make -j $(nproc)"
+RUN alias make="make -j $(nproc)"
 
 # TODO: split into layers and replace wget with aria2
 # e.g. aria2c -x 16 [url]
@@ -12,7 +12,7 @@ RUN mkdir /build /docker
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
     meson bison gawk python3 python3-pip ninja-build sqlite3 libsqlite3-dev \
-    libpcap-dev libcap-dev libcap-ng-dev xsltproc libpam-dev texinfo wget
+    libpcap-dev libcap-dev libcap-ng-dev xsltproc libpam-dev texinfo wget aria2
 
 
 # glibc
@@ -52,6 +52,10 @@ RUN make install
 RUN rm -rf /build/*
 
 
+# libgcc
+
+
+
 # util-linux
 WORKDIR /build
 RUN wget https://github.com/util-linux/util-linux/archive/refs/tags/v2.38.1.tar.gz
@@ -73,5 +77,14 @@ RUN make
 RUN make DESTDIR=/docker install
 RUN rm -rf /build/*
 
+
+# TODO:
+# libgcc
+# glibc
+# libstdc++
+# libxcrypt/libcrypt1.4.4.18-4
+# proot
+# busybox
+# Bash?
 
 #FROM scratch AS rootfs
