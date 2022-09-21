@@ -1,12 +1,9 @@
 FROM ubuntu:jammy AS build
 
 RUN alias make="make -j $(nproc)"
-
-# TODO: split into layers and replace wget with aria2
-# e.g. aria2c -x 16 [url]
-# Concurrency
-
+RUN export PATH=PATH="${PATH:+${PATH}:}~/docker"
 RUN mkdir /build /docker
+
 
 # Build host dependencies
 RUN apt-get update
@@ -30,8 +27,8 @@ RUN rm -rf /build/*
 
 # iputils
 WORKDIR /build
-RUN aria2c -x 16 https://github.com/iputils/iputils/archive/refs/tags/20211215.tar.gz
-RUN tar -zxvf 20211215.tar.gz
+RUN aria2c -x 16 https://github.com/iputils/iputils/archive/refs/tags/iputils-20211215.tar.gz
+RUN tar -zxvf iputils-20211215.tar.gz
 WORKDIR /build/iputils
 RUN meson setup builddir && meson configure
 WORKDIR /build/iputils/builddir
@@ -88,6 +85,20 @@ RUN make DESTDIR=/docker install
 RUN rm -rf /build/*
 
 
+# proot
+WORKDIR /build
+RUN aria2c -x 16 https://github.com/proot-me/proot/archive/refs/tags/v5.3.1.tar.gz
+RUN tar -zxvf proot-5.3.1.tar.gz
+WORKDIR /build/proot-5.3.1
+RUN ./autogen.sh
+RUN ./configure
+RUN make
+RUN make DESTDIR=/docker install
+RUN rm -rf /build/*
+
+
+# busybox
+
 
 # Potential libgcc: see gcc
 # ../gcc-src/configure --target=$TARGET --enable-languages=c
@@ -98,7 +109,6 @@ RUN rm -rf /build/*
 # TODO:
 # libgcc (possibly GCC)
 # libstdc++ (possibly GCC)
-# proot
 # busybox
 # Bash?
 
