@@ -10,7 +10,7 @@ RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
     meson bison gawk python3 python3-pip ninja-build sqlite3 libsqlite3-dev \
     libpcap-dev libcap-dev libcap-ng-dev xsltproc libpam-dev texinfo wget \
-    aria2 pigz automake pkg-config libtool autoconf
+    aria2 pigz automake pkg-config libtool autoconf iproute2
 
 
 # glibc
@@ -27,11 +27,11 @@ RUN rm -rf /build/*
 
 # iputils
 WORKDIR /build
-RUN aria2c -x 16 https://github.com/iputils/iputils/archive/refs/tags/iputils-20211215.tar.gz
+RUN aria2c -x 16 https://github.com/iputils/iputils/archive/refs/tags/20211215.tar.gz
 RUN tar -zxvf iputils-20211215.tar.gz
-WORKDIR /build/iputils
+WORKDIR /build/iputils-20211215
 RUN meson setup builddir && meson configure
-WORKDIR /build/iputils/builddir
+WORKDIR /build/iputils-20211215/builddir
 RUN ninja
 RUN DESTDIR=/docker meson install
 RUN rm -rf /build/*
