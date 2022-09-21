@@ -1,7 +1,9 @@
 FROM ubuntu:jammy AS build
+# TODO: split into layers and replace wget with aria2
+# e.g. aria2c -x 16 [url]
+
 
 RUN mkdir /build /docker
-
 
 # Build host dependencies
 RUN apt-get update
@@ -23,7 +25,6 @@ RUN rm -rf /build/*
 
 
 # iputils
-# NOTE: Meson build as described in docs did not work, ergo using ninja
 WORKDIR /build
 RUN git clone https://github.com/iputils/iputils.git
 WORKDIR /build/iputils
@@ -36,13 +37,13 @@ RUN rm -rf /build/*
 
 # GCC
 WORKDIR /build
-RUN tar -xvzf gcc-4.6.2.tar.gz
-WORKDIR /build/gcc-4.6.2
+RUN wget https://ftp.gnu.org/gnu/gcc/gcc-12.2.0/gcc-12.2.0.tar.gz
+RUN tar -xvzf gcc-12.2.0.tar.gz
+WORKDIR /build/gcc-12.2.0
 RUN ./contrib/download_prerequisites
 WORKDIR /build/objdir
-#RUN $PWD/../gcc-4.6.2/configure --prefix=$HOME/GCC-4.6.2 --enable-languages=c,c++,fortran,go
-RUN $PWD/../gcc-4.6.2/configure --prefix=$HOME/GCC-4.6.2 --enable-languages=c,c++,fortran
-RUN make all
+RUN $PWD/../gcc-12.2.0/configure --prefix=$HOME/GCC-12.2.0 --enable-languages=c,c++,fortran,go --disable-multilib
+RUN make
 RUN make install
 RUN rm -rf /build/*
 
