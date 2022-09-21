@@ -7,7 +7,7 @@ RUN mkdir /build /docker
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
     meson bison gawk python3 python3-pip ninja-build sqlite3 libsqlite3-dev \
-    libpcap-dev libcap-dev libcap-ng-dev xsltproc libpam-dev texinfo
+    libpcap-dev libcap-dev libcap-ng-dev xsltproc libpam-dev texinfo wget
 
 
 # glibc
