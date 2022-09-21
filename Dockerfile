@@ -98,7 +98,25 @@ RUN rm -rf /build/*
 
 
 # busybox
+WORKDIR /build
+RUN aria2c -x 16 https://busybox.net/downloads/busybox-1.35.0.tar.bz2
+RUN tar -xvf busybox-1.35.0.tar.gz
+WORKDIR /build/busybox-1.35.0
+RUN make defconfig
+RUN make
+RUN make DESTDIR=/docker install
+RUN rm -rf /build/*
 
+
+# bash
+WORKDIR /build
+RUN aria2c -x 16 https://ftpmirror.gnu.org/gnu/bash/bash-5.2-rc4.tar.gz
+RUN tar -xzvf bash-5.2-rc4.tar.gz
+WORKDIR /build/bash-5.2-rc4.tar.gz
+RUN ./configure
+RUN make
+RUN make DESTDIR=/docker install
+RUN rm -rf /build/*
 
 # Potential libgcc: see gcc
 # ../gcc-src/configure --target=$TARGET --enable-languages=c
@@ -109,7 +127,5 @@ RUN rm -rf /build/*
 # TODO:
 # libgcc (possibly GCC)
 # libstdc++ (possibly GCC)
-# busybox
-# Bash?
 
 #FROM scratch AS rootfs
