@@ -1,20 +1,25 @@
-FROM ubuntu:jammy
+FROM ubuntu:jammy AS build-env
 
-# For versions past end-of-life support
-# RUN sed -i -re 's/([a-z]{2}\.)?archive.ubuntu.com|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
-
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y dist-upgrade
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install \ 
-    git \
-    build-essential \
-    automake \
-    gcc-11
+RUN mkdir /build /docker
 
 WORKDIR /build
-RUN git clone https://github.com/richarah/fakeroot-ng
 
-WORKDIR /build/fakeroot-ng
-# Automake throws version warnings as errors - sweep these under carpet
-RUN automake --add-missing; exit 0
-RUN sh ./configure
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git meson bison gawk python3 python3-pip ninja-build sqlite3 libsqlite3-dev libpcap-dev libcap-dev xsltproc
+
+RUN git clone https://sourceware.org/git/glibc.git
+RUN cd glibc && git checkout release/2.36/master
+WORKDIR /build/glibc/glibc-build
+RUN ../configure --enable-add-ons --prefix=/docker --cache-file=.././config.cache --srcdir=. 
 RUN make
+
+
+
+WORKDIR /build
+
+RUN git clone https://github.com/iputils/iputils.git
+RUN ./configure && make && make DESTDIR=/docker install
+
+# RUN cd builddir && meson install
+
+#FROM scratch AS rootfs
