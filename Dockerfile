@@ -1,7 +1,10 @@
 FROM ubuntu:jammy AS build
+
+alias make="make -j $(nproc)"
+
 # TODO: split into layers and replace wget with aria2
 # e.g. aria2c -x 16 [url]
-
+# Concurrency
 
 RUN mkdir /build /docker
 
@@ -26,7 +29,8 @@ RUN rm -rf /build/*
 
 # iputils
 WORKDIR /build
-RUN git clone https://github.com/iputils/iputils.git
+RUN https://github.com/iputils/iputils/archive/refs/tags/20211215.tar.gz
+RUN tar -zxvf 20211215.tar.gz
 WORKDIR /build/iputils
 RUN meson setup builddir && meson configure
 WORKDIR /build/iputils/builddir
@@ -35,7 +39,7 @@ RUN DESTDIR=/docker meson install
 RUN rm -rf /build/*
 
 
-# GCC
+# gcc
 WORKDIR /build
 RUN wget https://ftp.gnu.org/gnu/gcc/gcc-12.2.0/gcc-12.2.0.tar.gz
 RUN tar -xvzf gcc-12.2.0.tar.gz
@@ -51,7 +55,6 @@ RUN rm -rf /build/*
 # util-linux
 WORKDIR /build
 RUN wget https://github.com/util-linux/util-linux/archive/refs/tags/v2.38.1.tar.gz
-
 RUN tar -zxvf v2.38.1.tar.gz
 WORKDIR build/util-linux-2.38.1
 RUN meson setup builddir && meson configure
@@ -62,7 +65,7 @@ RUN rm -rf /build/*
 
 
 # talloc
-RUN https://www.samba.org/ftp/talloc/talloc-2.3.4.tar.gz
+RUN wget https://www.samba.org/ftp/talloc/talloc-2.3.4.tar.gz
 RUN tar -zxvf talloc-2.3.4.tar.gz
 WORKDIR /build/talloc-2.3.4
 RUN ./configure
