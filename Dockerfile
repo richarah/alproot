@@ -93,7 +93,7 @@ FROM mirage-talloc-build AS mirage-libxcrypt-build
 WORKDIR /build
 RUN aria2c -x 16 https://github.com/besser82/libxcrypt/archive/refs/tags/v4.4.28.tar.gz
 RUN tar -zxvf libxcrypt-4.4.28.tar.gz
-WORKDIR /build/libxcrypt-v4.4.28
+WORKDIR /build/libxcrypt-4.4.28
 RUN ./autogen.sh
 RUN ./configure
 RUN make -j $(nproc)
