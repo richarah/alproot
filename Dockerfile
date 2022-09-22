@@ -90,10 +90,8 @@ RUN tar -xvf busybox-1.35.0.tar.bz2
 WORKDIR /build/busybox-1.35.0
 RUN make defconfig
 RUN make -j $(nproc)
-RUN mkdir /env/bin
-RUN mv busybox /env/bin/
+RUN cp busybox /env/bin
 RUN rm -rf /build/*
-
 
 # Hack to fix path glitch (do this properly someday) prior to Busybox install
 RUN apt-get install rsync -y
@@ -101,7 +99,19 @@ RUN rsync -a /env/env /tmp/env
 RUN rm -rf /env/env
 RUN rsync -a /tmp/env/env/* /env/
 RUN rm -rf /tmp/env
+RUN rm -rf /build
 
-RUN rm -rf build
+
+FROM bash AS busybox-installer
+COPY --from=build-env /env /
+WORKDIR /bin
+RUN exec /bin/busybox --install -s /bin
+
+# Users
+RUN echo "root:x:0:0:root:/root:/bin/sh" >> /etc/passwd
+RUN echo "mirage:x:1000:1000:Mirage,,,:/home/mirage:/bin/sh" >> /etc/passwd
+
+FROM scratch AS rootfs
+COPY --from=busybox-installer / /
 WORKDIR /
-CMD /bin/bash
+CMD ./bin/busybox
