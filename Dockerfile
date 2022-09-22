@@ -4,7 +4,7 @@ RUN export PATH=PATH="${PATH:+${PATH}:}~/env"
 RUN mkdir /build /env
 
 
-# Build host dependencies
+# Dependencies for build environment
 RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
     meson bison gawk python3 python3-pip ninja-build sqlite3 libsqlite3-dev \
