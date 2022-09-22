@@ -90,23 +90,17 @@ RUN tar -xvf busybox-1.35.0.tar.bz2
 WORKDIR /build/busybox-1.35.0
 RUN make defconfig
 RUN make -j $(nproc)
-RUN mv busybox /env/bin
-RUN rm -rf /build/*
-
-
-# bash (keymap currently broken, though some programs demand bash)
-WORKDIR /build
-RUN aria2c -x 16 https://ftp.gnu.org/gnu/bash/bash-5.2-rc4.tar.gz
-RUN tar -xzvf bash-5.2-rc4.tar.gz
-WORKDIR /build/bash-5.2-rc4
-RUN ./configure
-RUN make -j $(nproc)
-RUN make DESTDIR=/env install
+RUN mkdir /env/bin
+RUN mv busybox /env/bin/
 RUN rm -rf /build/*
 
 
 # Hack to fix path glitch (do this properly someday) prior to Busybox install
-RUN mv -vf /env/env/* /env/ && rm -rvf /env/env ;
+RUN apt-get install rsync -y
+RUN rsync -a /env/env /tmp/env
+RUN rm -rf /env/env
+RUN rsync -a /tmp/env/env/* /env/
+RUN rm -rf /tmp/env
 
 RUN rm -rf build
 WORKDIR /
