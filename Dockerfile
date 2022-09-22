@@ -1,4 +1,4 @@
-FROM ubuntu:jammy AS mirage-build
+FROM ubuntu:jammy AS build-env
 
 RUN export PATH=PATH="${PATH:+${PATH}:}~/env"
 RUN mkdir /build /env
@@ -14,7 +14,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
     libseccomp2 libseccomp-dev golang
 
 
-# This could be scripted, but every dependency has a slightly different build process...
+# This could (and should) be automated, though every dependency
+# has a slightly different build process...
+# TODO: investigate possible solution with Portage
+
 
 # glibc
 # TODO: replace with musl if this proves viable, or provide option of either
@@ -87,11 +90,11 @@ RUN tar -xvf busybox-1.35.0.tar.bz2
 WORKDIR /build/busybox-1.35.0
 RUN make defconfig
 RUN make -j $(nproc)
-RUN make DESTDIR=/env install
+RUN mv busybox /env/bin
 RUN rm -rf /build/*
 
 
-# bash (keymap currently broken, but some programs demand bash)
+# bash (keymap currently broken, though some programs demand bash)
 WORKDIR /build
 RUN aria2c -x 16 https://ftp.gnu.org/gnu/bash/bash-5.2-rc4.tar.gz
 RUN tar -xzvf bash-5.2-rc4.tar.gz
@@ -102,11 +105,9 @@ RUN make DESTDIR=/env install
 RUN rm -rf /build/*
 
 
-# Hack to fix path glitch (do this properly someday)
-RUN mv -vf /env/env/* /env/ && rm -rvf /env/env
+# Hack to fix path glitch (do this properly someday) prior to Busybox install
+RUN mv -vf /env/env/* /env/ && rm -rvf /env/env ;
 
-
-# TODO
-#FROM scratch AS rootfs
-
-
+RUN rm -rf build
+WORKDIR /
+CMD /bin/bash
