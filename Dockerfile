@@ -16,7 +16,7 @@ FROM mirage-ubuntu-build as mirage-glibc-build
 
 # glibc
 WORKDIR /build
-RUN aria2c -x 16 http://ftp.gnu.org/gnu/libc/glibc-2.36.tar.gz
+RUN aria2c -x 16 https://ftpmirror.gnu.org/gnu/libc/glibc-2.36.tar.gz
 RUN tar -xzvf glibc-2.36.tar.gz
 RUN cd glibc-2.36
 WORKDIR /build/glibc-2.36/glibc-build
@@ -30,7 +30,7 @@ FROM mirage-glibc-build as mirage-gcc-build
 
 # gcc
 WORKDIR /build
-RUN aria2c -x 16 https://ftp.gnu.org/gnu/gcc/gcc-12.2.0/gcc-12.2.0.tar.gz
+RUN aria2c -x 16 https://ftpmirror.gnu.org/gnu/gcc/gcc-12.2.0/gcc-12.2.0.tar.gz
 RUN tar -xvzf gcc-12.2.0.tar.gz
 WORKDIR /build/gcc-12.2.0
 RUN ./contrib/download_prerequisites
