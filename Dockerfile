@@ -1,7 +1,7 @@
 FROM ubuntu:jammy AS mirage-ubuntu-build
 
-RUN export PATH=PATH="${PATH:+${PATH}:}~/docker"
-RUN mkdir /build /docker
+RUN export PATH=PATH="${PATH:+${PATH}:}~/env"
+RUN mkdir /build /env
 
 
 # Build host dependencies
@@ -21,9 +21,9 @@ RUN aria2c -x 16 https://ftp.gnu.org/gnu/libc/glibc-2.36.tar.gz
 RUN tar -xzvf glibc-2.36.tar.gz
 RUN cd glibc-2.36
 WORKDIR /build/glibc-2.36/glibc-build
-RUN ../configure --enable-add-ons --prefix=/docker --cache-file=.././config.cache --srcdir=.. 
+RUN ../configure --enable-add-ons --prefix=/env --cache-file=.././config.cache --srcdir=.. 
 RUN make -j $(nproc)
-RUN make DESTDIR=/docker install
+RUN make DESTDIR=/env install
 RUN rm -rf /build/*
 
 
@@ -35,7 +35,7 @@ WORKDIR /build/iputils-20211215
 RUN meson setup builddir && meson configure
 WORKDIR /build/iputils-20211215/builddir
 RUN ninja
-RUN DESTDIR=/docker meson install
+RUN DESTDIR=/env meson install
 RUN rm -rf /build/*
 
 
@@ -48,7 +48,7 @@ RUN ./autogen.sh
 RUN meson setup builddir && meson configure
 WORKDIR /build/util-linux-2.38.1/builddir
 RUN ninja
-RUN DESTDIR=/docker meson install
+RUN DESTDIR=/env meson install
 RUN rm -rf /build/*
 
 
@@ -60,7 +60,7 @@ WORKDIR /build/libxcrypt-4.4.28
 RUN ./autogen.sh
 RUN ./configure
 RUN make -j $(nproc)
-RUN make DESTDIR=/docker install
+RUN make DESTDIR=/env install
 RUN rm -rf /build/*
 
 
@@ -72,7 +72,7 @@ WORKDIR /build/proot-5.3.1
 RUN make -j $(nproc) -C src loader.elf loader-m32.elf build.h
 RUN make -j $(nproc) -C src proot care
 RUN cp src/proot /usr/bin
-RUN cp src/proot /docker/usr/bin
+RUN cp src/proot /env/usr/bin
 RUN rm -rf /build/*
 
 
@@ -83,7 +83,7 @@ RUN tar -xvf busybox-1.35.0.tar.bz2
 WORKDIR /build/busybox-1.35.0
 RUN make defconfig
 RUN make -j $(nproc)
-RUN make DESTDIR=/docker install
+RUN make DESTDIR=/env install
 RUN rm -rf /build/*
 
 
@@ -94,17 +94,11 @@ RUN tar -xzvf bash-5.2-rc4.tar.gz
 WORKDIR /build/bash-5.2-rc4
 RUN ./configure
 RUN make -j $(nproc)
-RUN make DESTDIR=/docker install
+RUN make DESTDIR=/env install
 RUN rm -rf /build/*
 
-# Potential libgcc: see gcc
-# ../gcc-src/configure --target=$TARGET --enable-languages=c
-# make all-target-libgcc
-# make install-target-libgcc
 
- 
-# TODO:
-# libgcc (possibly GCC)
-# libstdc++ (possibly GCC)
+# Hack to fix path glitch (do this properly someday)
+RUN mv -vf /env/env/* /env/ && rm -rvf /env/env
 
 #FROM scratch AS rootfs
