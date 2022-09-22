@@ -10,7 +10,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
     meson bison gawk python3 python3-pip ninja-build sqlite3 libsqlite3-dev \
     libpcap-dev libcap-dev libcap-ng-dev xsltproc libpam-dev texinfo wget \
     aria2 pigz automake pkg-config libtool autoconf iproute2 autopoint gettext \
-    libncurses5-dev libncursesw5-dev uthash-dev libtalloc-dev libarchive-dev
+    libncurses5-dev libncursesw5-dev uthash-dev libtalloc-dev libarchive-dev \
+    libseccomp2 libseccomp-dev golang
 
 
 # This could be scripted, but every dependency has a slightly different build process...
@@ -102,3 +103,5 @@ RUN rm -rf /build/*
 RUN mv -vf /env/env/* /env/ && rm -rvf /env/env
 
 #FROM scratch AS rootfs
+
+
