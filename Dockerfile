@@ -102,6 +102,8 @@ RUN rm -rf /tmp/env
 RUN rm -rf /build
 
 
+# Temporary solution. Also gives us Bash and FHS standard dirtree
+# TODO: rewrite
 FROM bash AS busybox-installer
 COPY --from=build-env /env /
 WORKDIR /bin
