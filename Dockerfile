@@ -61,7 +61,7 @@ FROM mirage-iputils-build AS mirage-util-linux-build
 WORKDIR /build
 RUN aria2c -x 16 https://github.com/util-linux/util-linux/archive/refs/tags/v2.38.1.tar.gz
 RUN tar -zxvf util-linux-2.38.1.tar.gz
-WORKDIR build/util-linux-2.38.1
+WORKDIR /build/util-linux-2.38.1
 RUN meson setup builddir && meson configure
 WORKDIR /build/util-linux-2.38.1/builddir
 RUN ninja
