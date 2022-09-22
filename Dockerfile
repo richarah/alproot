@@ -58,7 +58,7 @@ RUN rm -rf /build/*
 FROM mirage-iputils-build AS mirage-util-linux-build
 
 # TEMP
-RUN apt-get install -y autopoint gettext
+RUN apt-get install -y autopoint gettext libncurses5-dev libncursesw5-dev
 
 
 # util-linux
