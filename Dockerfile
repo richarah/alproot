@@ -1,4 +1,4 @@
-FROM ubuntu:jammy AS mirage-ubuntu-build
+FROM ubuntu:jammy AS mirage-build
 
 RUN export PATH=PATH="${PATH:+${PATH}:}~/env"
 RUN mkdir /build /env
@@ -17,6 +17,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
 # This could be scripted, but every dependency has a slightly different build process...
 
 # glibc
+# TODO: replace with musl if this proves viable, or provide option of either
 WORKDIR /build
 RUN aria2c -x 16 https://ftp.gnu.org/gnu/libc/glibc-2.36.tar.gz
 RUN tar -xzvf glibc-2.36.tar.gz
@@ -29,6 +30,7 @@ RUN rm -rf /build/*
 
 
 # iputils
+# TODO: switch out with Busybox' integrated iputils
 WORKDIR /build
 RUN aria2c -x 16 https://github.com/iputils/iputils/archive/refs/tags/20211215.tar.gz
 RUN tar -zxvf iputils-20211215.tar.gz
@@ -41,6 +43,7 @@ RUN rm -rf /build/*
 
 
 # util-linux
+# TODO: see above note on Busybox
 WORKDIR /build
 RUN aria2c -x 16 https://github.com/util-linux/util-linux/archive/refs/tags/v2.38.1.tar.gz
 RUN tar -zxvf util-linux-2.38.1.tar.gz
@@ -88,7 +91,7 @@ RUN make DESTDIR=/env install
 RUN rm -rf /build/*
 
 
-# bash
+# bash (keymap currently broken, but some programs demand bash)
 WORKDIR /build
 RUN aria2c -x 16 https://ftp.gnu.org/gnu/bash/bash-5.2-rc4.tar.gz
 RUN tar -xzvf bash-5.2-rc4.tar.gz
@@ -102,6 +105,8 @@ RUN rm -rf /build/*
 # Hack to fix path glitch (do this properly someday)
 RUN mv -vf /env/env/* /env/ && rm -rvf /env/env
 
+
+# TODO
 #FROM scratch AS rootfs
 
 
