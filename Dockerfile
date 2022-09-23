@@ -39,8 +39,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
 WORKDIR /build
 RUN aria2c -x $CONNS https://git.musl-libc.org/cgit/musl/snapshot/musl-1.2.3.tar.gz
 RUN tar -xzvf musl-1.2.3.tar.gz
-RUN cd musl-1.2.3
-RUN configure && make -j $(nproc)
+WORKDIR /build/musl-1.2.3
+RUN ./configure && make -j $(nproc)
 RUN make DESTDIR=/env install
 RUN rm -rf /build/*
 
