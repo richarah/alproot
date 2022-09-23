@@ -90,8 +90,9 @@ RUN tar -xvf busybox-1.35.0.tar.bz2
 WORKDIR /build/busybox-1.35.0
 RUN make defconfig
 RUN make  -j $(nproc)
+RUN mkdir /env/bin
 RUN cp busybox /env/bin
-RUN rm -rf /build/*
+RUN rm -rf /build/
 
 
 # iputils
@@ -106,31 +107,6 @@ RUN ninja
 RUN DESTDIR=/env meson install
 RUN rm -rf /build/*
 
-# bash
-WORKDIR /build
-RUN aria2c -x $CONNS https://ftp.gnu.org/gnu/bash/bash-1.14.7.tar.gz
-RUN tar -xzvf bash-1.14.7.tar.gz
-WORKDIR build/bash-1.14.7
-RUN ./configure
-RUN make  -j $(nproc)
-RUN make DESTDIR=/env install
-RUN rm -rf /build/*
-
-
-# Hack to fix path glitch (do this properly someday) prior to Busybox install
-RUN rsync -a /env/env /tmp/env
-RUN rm -rf /env/env
-RUN rsync -a /tmp/env/env/* /env/
-RUN rm -rf /tmp/env
-RUN rm -rf /build
-
-
-# Temporary solution. Also gives us Bash and FHS standard dirtree
-# TODO: rewrite
-FROM scratch AS busybox-installer
-COPY --from=build-env /env /
-WORKDIR /bin
-RUN exec /bin/busybox --install -s /bin
 
 # Internet
 WORKDIR /etc
@@ -140,7 +116,24 @@ RUN touch resolv.conf && echo "nameserver 8.8.8.8" >> resolv.conf
 RUN echo "root:x:0:0:root:/root:/bin/sh" >> /etc/passwd
 RUN echo "mirage:x:1000:1000:Mirage,,,:/home/mirage:/bin/sh" >> /etc/passwd
 
+# FHS directory tree
+RUN mkdir -pv /env/{bin,boot,etc/{opt,sysconfig},home,lib/firmware,mnt,opt}
+RUN mkdir -pv /env/{media/{floppy,cdrom},sbin,srv,var}
+RUN install -dv -m 0750 /env/root
+RUN install -dv -m 1777 /env/tmp /env/var/tmp
+RUN mkdir -pv /env/usr/{,local/}{bin,include,lib,sbin,src}
+RUN mkdir -pv /env/usr/{,local/}share/{color,dict,doc,info,locale,man}
+RUN mkdir -v  /env/usr/{,local/}share/{misc,terminfo,zoneinfo}
+RUN mkdir -v  /env/usr/libexec
+RUN mkdir -pv /env/usr/{,local/}share/man/man{1..8}
+RUN mkdir -v /env/lib64
+RUN mkdir -v /env/var/{log,mail,spool}
+RUN ln -sv /env/run /env/var/run
+RUN ln -sv /env/run/lock /env/var/lock
+RUN mkdir -pv /env/var/{opt,cache,lib/{color,misc,locate},local}
+
+
 FROM scratch AS rootfs
-COPY --from=busybox-installer / /
+COPY --from=build-env /env /
 WORKDIR /
 CMD ./bin/busybox
