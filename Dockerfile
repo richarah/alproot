@@ -1,4 +1,5 @@
 FROM ubuntu:jammy AS build-env
+# TODO: switch to build against musl libc
 
 # Connections (aria2c)
 ARG CONNS=4
