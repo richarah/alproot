@@ -108,11 +108,13 @@ COPY --from=build-env /env /
 WORKDIR /bin
 RUN exec /bin/busybox --install -s /bin
 
+# Internet
+WORKDIR /etc
+RUN touch resolv.conf && echo "nameserver 8.8.8.8" >> resolv.conf
 
 # Users
 RUN echo "root:x:0:0:root:/root:/bin/sh" >> /etc/passwd
 RUN echo "mirage:x:1000:1000:Mirage,,,:/home/mirage:/bin/sh" >> /etc/passwd
-
 
 FROM scratch AS rootfs
 COPY --from=busybox-installer / /
