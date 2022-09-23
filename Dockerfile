@@ -1,8 +1,5 @@
 FROM ubuntu:jammy AS build-env
 
-# Compiler flags
-ARG FLAGS=" CFLAGS='-Os' CXXFLAGS='-Os' "
-
 # Connections (aria2c)
 ARG CONNS=4
 
@@ -27,16 +24,25 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
 
 # glibc
 # TODO: replace with musl if this proves viable, or provide option of either
-WORKDIR /build
-RUN aria2c -x $CONNS https://ftp.gnu.org/gnu/libc/glibc-2.36.tar.gz
-RUN tar -xzvf glibc-2.36.tar.gz
-RUN cd glibc-2.36
-WORKDIR /build/glibc-2.36/glibc-build
-RUN ../configure --enable-add-ons --prefix=/env --cache-file=.././config.cache --srcdir=.. 
-RUN make -j $(nproc)
-RUN make $FLAGS DESTDIR=/env install
-RUN rm -rf /build/*
+# WORKDIR /build
+# RUN aria2c -x $CONNS https://ftp.gnu.org/gnu/libc/glibc-2.36.tar.gz
+# RUN tar -xzvf glibc-2.36.tar.gz
+# RUN cd glibc-2.36
+# WORKDIR /build/glibc-2.36/glibc-build
+# RUN ../configure --enable-add-ons --prefix=/env --cache-file=.././config.cache --srcdir=.. 
+# RUN make -j $(nproc)
+# RUN make  DESTDIR=/env install
+# RUN rm -rf /build/*
 
+
+# musl libc
+WORKDIR /build
+RUN aria2c -x $CONNS https://git.musl-libc.org/cgit/musl/snapshot/musl-1.2.3.tar.gz
+RUN tar -xzvf musl-1.2.3.tar.gz
+RUN cd musl-1.2.3
+RUN configure && make -j $(nproc)
+RUN make DESTDIR=/env install
+RUN rm -rf /build/*
 
 # util-linux
 # TODO: see above note on Busybox
@@ -59,7 +65,7 @@ RUN tar -zxvf libxcrypt-4.4.28.tar.gz
 WORKDIR /build/libxcrypt-4.4.28
 RUN ./autogen.sh
 RUN ./configure
-RUN make $FLAGS -j $(nproc)
+RUN make -j $(nproc)
 RUN make DESTDIR=/env install
 RUN rm -rf /build/*
 
@@ -69,8 +75,8 @@ WORKDIR /build
 RUN aria2c -x $CONNS https://github.com/proot-me/proot/archive/refs/tags/v5.3.1.tar.gz
 RUN tar -zxvf proot-5.3.1.tar.gz
 WORKDIR /build/proot-5.3.1
-RUN make $FLAGS -j $(nproc) -C src loader.elf loader-m32.elf build.h
-RUN make $FLAGS -j $(nproc) -C src proot care
+RUN make  -j $(nproc) -C src loader.elf loader-m32.elf build.h
+RUN make  -j $(nproc) -C src proot care
 RUN cp src/proot /usr/bin
 RUN cp src/proot /env/usr/bin
 RUN rm -rf /build/*
@@ -82,7 +88,7 @@ RUN aria2c -x $CONNS https://busybox.net/downloads/busybox-1.35.0.tar.bz2
 RUN tar -xvf busybox-1.35.0.tar.bz2
 WORKDIR /build/busybox-1.35.0
 RUN make defconfig
-RUN make $FLAGS -j $(nproc)
+RUN make  -j $(nproc)
 RUN cp busybox /env/bin
 RUN rm -rf /build/*
 
@@ -105,8 +111,8 @@ RUN aria2c -x $CONNS https://ftp.gnu.org/gnu/bash/bash-1.14.7.tar.gz
 RUN tar -xzvf bash-1.14.7.tar.gz
 WORKDIR build/bash-1.14.7
 RUN ./configure
-RUN make $FLAGS -j $(nproc)
-RUN cp bash /env/bin
+RUN make  -j $(nproc)
+RUN make DESTDIR=/env install
 RUN rm -rf /build/*
 
 
