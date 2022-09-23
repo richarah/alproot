@@ -114,14 +114,15 @@ RUN rm -rf /build/*
 # RUN rm -rf /build/*
 
 
-# Internet
-RUN touch /env/etc/resolv.conf && echo "nameserver 8.8.8.8" >> /env/etc/resolv.conf
+FROM scratch AS rootfs
+COPY --from=build-env /env /
+WORKDIR /
 
 # Users
 RUN echo "root:x:0:0:root:/root:/bin/sh" >> /etc/passwd
 RUN echo "mirage:x:1000:1000:Mirage,,,:/home/mirage:/bin/sh" >> /etc/passwd
 
-FROM scratch AS rootfs
-COPY --from=build-env /env /
-WORKDIR /
+# Internet
+RUN echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+
 CMD PATH=$PATH:./bin:./usr/bin busybox sh
