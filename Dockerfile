@@ -11,7 +11,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
     libpcap-dev libcap-dev libcap-ng-dev xsltproc libpam-dev texinfo wget \
     aria2 pigz automake pkg-config libtool autoconf iproute2 autopoint gettext \
     libncurses5-dev libncursesw5-dev uthash-dev libtalloc-dev libarchive-dev \
-    libseccomp2 libseccomp-dev golang
+    libseccomp2 libseccomp-dev golang rsync 
 
 
 # This could (and should) be automated, though every dependency
@@ -94,7 +94,6 @@ RUN DESTDIR=/env meson install
 RUN rm -rf /build/*
 
 # Hack to fix path glitch (do this properly someday) prior to Busybox install
-RUN apt-get install rsync -y
 RUN rsync -a /env/env /tmp/env
 RUN rm -rf /env/env
 RUN rsync -a /tmp/env/env/* /env/
