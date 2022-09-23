@@ -18,6 +18,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
     libseccomp2 libseccomp-dev golang rsync 
 
 
+WORKDIR /build
+RUN wget https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/x86_64/alpine-minirootfs-3.16.2-x86_64.tar.gz -O alpine.tar.gz
+RUN tar -xzvf alpine.tar.gz -C /env
+RUN rm -rf alpine.tar.gz
+
+
 # This could (and should) be automated, though every dependency
 # has a slightly different build process...
 # TODO: investigate possible solution with Portage
@@ -37,26 +43,26 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
 
 
 # musl libc
-WORKDIR /build
-RUN aria2c -x $CONNS https://git.musl-libc.org/cgit/musl/snapshot/musl-1.2.3.tar.gz
-RUN tar -xzvf musl-1.2.3.tar.gz
-WORKDIR /build/musl-1.2.3
-RUN ./configure && make -j $(nproc)
-RUN make DESTDIR=/env install
-RUN rm -rf /build/*
+# WORKDIR /build
+# RUN aria2c -x $CONNS https://git.musl-libc.org/cgit/musl/snapshot/musl-1.2.3.tar.gz
+# RUN tar -xzvf musl-1.2.3.tar.gz
+# WORKDIR /build/musl-1.2.3
+# RUN ./configure && make -j $(nproc)
+# RUN make DESTDIR=/env install
+# RUN rm -rf /build/*
 
 # util-linux
 # TODO: see above note on Busybox
-WORKDIR /build
-RUN aria2c -x $CONNS https://github.com/util-linux/util-linux/archive/refs/tags/v2.38.1.tar.gz
-RUN tar -zxvf util-linux-2.38.1.tar.gz
-WORKDIR /build/util-linux-2.38.1
-RUN ./autogen.sh
-RUN meson setup builddir && meson configure
-WORKDIR /build/util-linux-2.38.1/builddir
-RUN ninja
-RUN DESTDIR=/env meson install
-RUN rm -rf /build/*
+# WORKDIR /build
+# RUN aria2c -x $CONNS https://github.com/util-linux/util-linux/archive/refs/tags/v2.38.1.tar.gz
+# RUN tar -zxvf util-linux-2.38.1.tar.gz
+# WORKDIR /build/util-linux-2.38.1
+# RUN ./autogen.sh
+# RUN meson setup builddir && meson configure
+# WORKDIR /build/util-linux-2.38.1/builddir
+# RUN ninja
+# RUN DESTDIR=/env meson install
+# RUN rm -rf /build/*
 
 
 # libxcrypt
@@ -84,56 +90,38 @@ RUN rm -rf /build/*
 
 
 # busybox
-WORKDIR /build
-RUN aria2c -x $CONNS https://busybox.net/downloads/busybox-1.35.0.tar.bz2
-RUN tar -xvf busybox-1.35.0.tar.bz2
-WORKDIR /build/busybox-1.35.0
-RUN make defconfig
-RUN make  -j $(nproc)
-RUN mkdir /env/bin
-RUN cp busybox /env/bin
-RUN rm -rf /build/
+# WORKDIR /build
+# RUN aria2c -x $CONNS https://busybox.net/downloads/busybox-1.35.0.tar.bz2
+# RUN tar -xvf busybox-1.35.0.tar.bz2
+# WORKDIR /build/busybox-1.35.0
+# RUN make defconfig
+# RUN make  -j $(nproc)
+# RUN mkdir /env/bin
+# RUN cp busybox /env/bin
+# RUN rm -rf /build/
 
 
 # iputils
 # TODO: switch out with Busybox' integrated iputils
-WORKDIR /build
-RUN aria2c -x $CONNS https://github.com/iputils/iputils/archive/refs/tags/20211215.tar.gz
-RUN tar -zxvf iputils-20211215.tar.gz
-WORKDIR /build/iputils-20211215
-RUN meson setup builddir && meson configure
-WORKDIR /build/iputils-20211215/builddir
-RUN ninja
-RUN DESTDIR=/env meson install
-RUN rm -rf /build/*
+# WORKDIR /build
+# RUN aria2c -x $CONNS https://github.com/iputils/iputils/archive/refs/tags/20211215.tar.gz
+# RUN tar -zxvf iputils-20211215.tar.gz
+# WORKDIR /build/iputils-20211215
+# RUN meson setup builddir && meson configure
+# WORKDIR /build/iputils-20211215/builddir
+# RUN ninja
+# RUN DESTDIR=/env meson install
+# RUN rm -rf /build/*
 
 
 # Internet
-WORKDIR /etc
-RUN touch resolv.conf && echo "nameserver 8.8.8.8" >> resolv.conf
+RUN touch /env/etc/resolv.conf && echo "nameserver 8.8.8.8" >> /env/etc/resolv.conf
 
 # Users
 RUN echo "root:x:0:0:root:/root:/bin/sh" >> /etc/passwd
 RUN echo "mirage:x:1000:1000:Mirage,,,:/home/mirage:/bin/sh" >> /etc/passwd
 
-# FHS directory tree
-RUN mkdir -pv /env/{bin,boot,etc/{opt,sysconfig},home,lib/firmware,mnt,opt}
-RUN mkdir -pv /env/{media/{floppy,cdrom},sbin,srv,var}
-RUN install -dv -m 0750 /env/root
-RUN install -dv -m 1777 /env/tmp /env/var/tmp
-RUN mkdir -pv /env/usr/{,local/}{bin,include,lib,sbin,src}
-RUN mkdir -pv /env/usr/{,local/}share/{color,dict,doc,info,locale,man}
-RUN mkdir -v  /env/usr/{,local/}share/{misc,terminfo,zoneinfo}
-RUN mkdir -v  /env/usr/libexec
-RUN mkdir -pv /env/usr/{,local/}share/man/man{1..8}
-RUN mkdir -v /env/lib64
-RUN mkdir -v /env/var/{log,mail,spool}
-RUN ln -sv /env/run /env/var/run
-RUN ln -sv /env/run/lock /env/var/lock
-RUN mkdir -pv /env/var/{opt,cache,lib/{color,misc,locate},local}
-
-
 FROM scratch AS rootfs
 COPY --from=build-env /env /
 WORKDIR /
-CMD ./bin/busybox
+CMD PATH=$PATH:./bin:./usr/bin busybox sh
