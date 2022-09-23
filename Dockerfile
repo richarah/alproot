@@ -32,19 +32,6 @@ RUN make DESTDIR=/env install
 RUN rm -rf /build/*
 
 
-# iputils
-# TODO: switch out with Busybox' integrated iputils
-WORKDIR /build
-RUN aria2c -x 16 https://github.com/iputils/iputils/archive/refs/tags/20211215.tar.gz
-RUN tar -zxvf iputils-20211215.tar.gz
-WORKDIR /build/iputils-20211215
-RUN meson setup builddir && meson configure
-WORKDIR /build/iputils-20211215/builddir
-RUN ninja
-RUN DESTDIR=/env meson install
-RUN rm -rf /build/*
-
-
 # util-linux
 # TODO: see above note on Busybox
 WORKDIR /build
@@ -93,6 +80,19 @@ RUN make -j $(nproc)
 RUN cp busybox /env/bin
 RUN rm -rf /build/*
 
+
+# iputils
+# TODO: switch out with Busybox' integrated iputils
+WORKDIR /build
+RUN aria2c -x 16 https://github.com/iputils/iputils/archive/refs/tags/20211215.tar.gz
+RUN tar -zxvf iputils-20211215.tar.gz
+WORKDIR /build/iputils-20211215
+RUN meson setup builddir && meson configure
+WORKDIR /build/iputils-20211215/builddir
+RUN ninja
+RUN DESTDIR=/env meson install
+RUN rm -rf /build/*
+
 # Hack to fix path glitch (do this properly someday) prior to Busybox install
 RUN apt-get install rsync -y
 RUN rsync -a /env/env /tmp/env
@@ -109,9 +109,11 @@ COPY --from=build-env /env /
 WORKDIR /bin
 RUN exec /bin/busybox --install -s /bin
 
+
 # Users
 RUN echo "root:x:0:0:root:/root:/bin/sh" >> /etc/passwd
 RUN echo "mirage:x:1000:1000:Mirage,,,:/home/mirage:/bin/sh" >> /etc/passwd
+
 
 FROM scratch AS rootfs
 COPY --from=busybox-installer / /
