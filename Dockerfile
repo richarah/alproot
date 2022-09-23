@@ -18,6 +18,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential git \
     libseccomp2 libseccomp-dev golang rsync 
 
 
+# Alpine
 WORKDIR /build
 RUN wget https://dl-cdn.alpinelinux.org/alpine/v3.16/releases/x86_64/alpine-minirootfs-3.16.2-x86_64.tar.gz -O alpine.tar.gz
 RUN tar -xzvf alpine.tar.gz -C /env
@@ -117,12 +118,5 @@ RUN rm -rf /build/*
 FROM scratch AS rootfs
 COPY --from=build-env /env /
 WORKDIR /
-
-# Users
-RUN echo "root:x:0:0:root:/root:/bin/sh" >> /etc/passwd
-RUN echo "mirage:x:1000:1000:Mirage,,,:/home/mirage:/bin/sh" >> /etc/passwd
-
-# Internet
-RUN echo "nameserver 8.8.8.8" >> /etc/resolv.conf
 
 CMD PATH=$PATH:./bin:./usr/bin busybox sh
