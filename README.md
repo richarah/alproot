@@ -20,7 +20,9 @@ The project aims to provide a truly rootless (i.e. rootless to set up and config
 
 While a wide range of supposedly rootless sandboxes are available, most of these require superuser privileges to actually *set up*, pull in a variety of dependencies which require access to system-wide resources. In other words, these may not be rootless in practice if the host does not already have these dependencies installed.
 
-## Setup and run
+## Usage
+
+#### Setup
 
 ```
 # Fetch repository
@@ -28,11 +30,18 @@ git clone https://github.com/richarah/alproot
 cd alproot
 # Setup script: clean env folder, fetch and extract rootfs from stable release
 ./alproot-setup.sh
-# Initialise & enter proot environment
+```
+
+## Running Alproot
+
+```
+# To execute a command within the sandbox, e.g.:
+./alproot.sh echo "Hello World" >> helloworld.txt
+# If no arguments are found, Alproot will default to busybox sh:
 ./alproot.sh
 ```
 
-## Build Alproot rootfs
+## Building the Alproot rootfs
 Ensure that your machine has Git and Docker installed, then clone the repository and build the root file system and alproot dependencies as follows:
 ```
 git clone https://github.com/richarah/alproot
