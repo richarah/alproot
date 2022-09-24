@@ -14,12 +14,7 @@ May be brought up without access to a package manager, superuser privileges, `LD
 
 ## Setup and run
 
-Clone the repository, run the one-time `alproot-setup.sh` script and use `alproot.sh` to bring up the BusyBox environment:
 ```
-git clone https://github.com/richarah/alproot.git
-cd alproot
-# Setup env (should take ~10 seconds)
-./alproot-setup.sh
-# Enter proot env
+tar -xzvf alproot-env.tar.gz -C env
 ./alproot.sh
 ```
