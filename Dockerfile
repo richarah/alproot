@@ -115,6 +115,21 @@ RUN rm -rf /build/*
 # RUN rm -rf /build/*
 
 
+# runq
+WORKDIR /build
+
+# get the runq and runc source code
+RUN git clone --recurse-submodules https://github.com/gotoz/runq.git
+
+# compile and create a release tar file in a Docker container
+WORKDIR /build/runq
+RUN make release
+
+# install runq to `/var/lib/runq`
+RUN make DESTDIR=/env release-install
+
+
+
 FROM scratch AS rootfs
 COPY --from=build-env /env /
 WORKDIR /
