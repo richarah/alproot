@@ -26,9 +26,8 @@ While a wide range of supposedly rootless sandboxes are available, most of these
 # Fetch repository
 git clone https://github.com/richarah/alproot
 cd alproot
-# Fetch and extract root file system
-wget https://github.com/richarah/alproot/releases/download/stable/alproot-env.tar.gz
-tar -xzvf alproot-env.tar.gz -C env
+# Setup script: clean env folder, fetch and extract rootfs from stable release
+./alproot-setup.sh
 # Initialise & enter proot environment
 ./alproot.sh
 ```
