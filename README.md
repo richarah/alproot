@@ -35,10 +35,9 @@ cd alproot
 ## Running Alproot
 
 ```
+# When run with no arguments, Alproot will default to /bin/sh.
 # To execute a command within the sandbox, e.g.:
-./alproot.sh echo "Hello World" >> helloworld.txt
-# If no arguments are found, Alproot will default to busybox sh:
-./alproot.sh
+./alproot.sh COMMANDS
 ```
 
 ## Building the Alproot rootfs
