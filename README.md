@@ -15,6 +15,6 @@ May be brought up without access to a package manager, superuser privileges, `LD
 ## Setup and run
 
 ```
-tar -xzvf alproot-env.tar.gz -C env
+tar -xJvf alproot-env.tar.xz -C env
 ./alproot.sh
 ```
