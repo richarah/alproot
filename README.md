@@ -15,6 +15,8 @@ May be brought up without access to a package manager, superuser privileges, `LD
 ## Setup and run
 
 ```
-tar -xJvf alproot-env.tar.xz -C env
+# Extract rootfs
+tar -xzvf alproot-env.tar.gz -C env
+# Initialise & enter proot environment
 ./alproot.sh
 ```
