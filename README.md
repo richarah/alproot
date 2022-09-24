@@ -23,8 +23,8 @@ While a wide range of supposedly rootless sandboxes are available, most of these
 ## Setup and run
 
 ```
-# Extract rootfs
-
+# Fetch and extract root file system
+wget https://github.com/richarah/alproot/releases/download/stable/alproot-env.tar.gz
 tar -xzvf alproot-env.tar.gz -C env
 # Initialise & enter proot environment
 ./alproot.sh
