@@ -8,4 +8,4 @@ ARGS="${@:-$DEFAULTARGS}"
 PATH=$PATH:./bin:./usr/bin
 echo "nameserver 8.8.8.8" >> etc/resolv.conf
 
-proot -r . -0 -w / -b /dev -b /proc -b /sys $ARGS
+proot -r . -0 -w / -b /dev -b /proc -b /sys -b /boot $ARGS
