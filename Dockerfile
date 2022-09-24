@@ -118,5 +118,7 @@ RUN rm -rf /build/*
 FROM scratch AS rootfs
 COPY --from=build-env /env /
 WORKDIR /
-
+# Nasty hack to fix suid bug
+# TODO: this, again, in a way that does not impose a potential vulnerability
+RUN chmod u+s /bin/busybox
 CMD PATH=$PATH:./bin:./usr/bin busybox sh
