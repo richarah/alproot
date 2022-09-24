@@ -6,11 +6,11 @@ Also note that proot's root UID spoofing does not provide any true privilege esc
 
 # Alproot
 
-#### What is this?
+## What is this?
 
-Alproot (`alpine`+`proot`) is a lightweight, Alpine Linux-based sandbox environment running in `proot` instead of a traditional `fakeroot`+`chroot` env.
+Alproot is a lightweight (<10MB), truly rootless, Alpine-based sandbox environment running in `proot` instead of a traditional `fakeroot`/`chroot` sandbox.
 
-May be brought up without access to a package manager, superuser privileges, `LD_PRELOAD`, preinstalled `fakeroot` or other luxuries commonly taken for granted when setting up such environments.
+May be brought up without access to a package manager, superuser privileges, `LD_PRELOAD` tricks, preinstalled `fakeroot` or other luxuries commonly taken for granted when setting up such environments.
 
 ## Setup and run
 
@@ -19,4 +19,12 @@ May be brought up without access to a package manager, superuser privileges, `LD
 tar -xzvf alproot-env.tar.gz -C env
 # Initialise & enter proot environment
 ./alproot.sh
+```
+
+## Build Alproot rootfs
+Ensure that your machine has Git and Docker installed, then clone the repository and build the root file system and alproot dependencies as follows:
+```
+git clone https://github.com/richarah/alproot
+cd alproot
+./alproot-build.sh
 ```
